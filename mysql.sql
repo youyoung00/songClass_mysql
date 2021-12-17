@@ -8,14 +8,12 @@ CREATE DATABASE
 
 use study ;
 
-
-
 DROP DATABASE study ;
 
 CREATE TABLE professor (
   _id INT AUTO_INCREMENT, 
-  name VARCHAR(32)   NOT NULL, 
-  belong VARCHAR(12)   DEFAULT   'FOO', 
+  name VARCHAR(32) NOT NULL, 
+  belong VARCHAR(12) DEFAULT 'FOO', 
   phone VARCHAR(12), 
   status INT,
   PRIMARY KEY(_id)
@@ -159,9 +157,114 @@ CREATE TABLE table3 (
 INSERT INTO STUDY.table3
     (name, belong, phone, status)
 SELECT
-    name,
-    belong,
-    phone,
-    status
+    name, belong, phone, status
 FROM
-    TRAINING1.table2
+    TRAINING1.table2;
+
+
+UPDATE STUDY.table3
+    
+SET
+    name='강호동',
+    belong='EDE',
+    phone='01022223333',
+    status='2'
+WHERE 
+    name='유재석';
+
+TRUNCATE TABLE professor;
+
+INSERT INTO STUDY.professor
+    (name, belong, phone, status)
+SELECT 
+    name, belong, phone, status
+FROM 
+    STUDY.professor
+WHERE 
+    _id > 500;
+
+DELETE    
+
+FROM
+    STUDY.professor
+WHERE
+    _id > 750;
+
+UPDATE 
+    STUDY.professor
+SET
+    belong= NULL
+WHERE 
+    _id < 100;
+
+DELETE  
+    
+FROM
+    STUDY.professor
+WHERE 
+    belong is NOT null;
+
+INSERT INTO STUDY.professor
+    (name, belong, phone, status)
+SELECT 
+    name, belong, phone, status
+FROM 
+    STUDY.professor;
+
+INSERT INTO STUDY.professor
+    (name, belong, phone, status)
+SELECT 
+    name, belong, phone, status
+FROM 
+    STUDY.professor;
+-- WHERE
+--     _id * 4;
+
+UPDATE 
+    STUDY.professor
+SET
+    phone= NULL;
+
+UPDATE 
+    STUDY.professor
+SET
+    phone = name;
+
+UPDATE 
+    STUDY.professor
+SET
+    name = ''
+WHERE 
+    name IS NOT NULL; 
+
+SELECT 
+    professor.name
+FROM 
+    STUDY.professor
+WHERE 
+    professor.name is NULL;
+
+DELETE 
+
+FROM 
+    STUDY.professor
+WHERE 
+    professor.name IS NULL;
+
+SELECT 
+    professor.name
+FROM 
+    STUDY.professor
+WHERE 
+    professor.name= '';
+
+UPDATE 
+    STUDY.professor
+SET 
+    professor.name= 'noname'
+WHERE 
+    professor.name= '';
+
+TRUNCATE TABLE professor;
+
+DROP TABLE professor

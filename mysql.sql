@@ -8,6 +8,8 @@ CREATE DATABASE
 
 use study ;
 
+
+
 DROP DATABASE study ;
 
 CREATE TABLE professor (
@@ -142,3 +144,24 @@ FROM
     table2
 WHERE 
     _id < 12;
+
+use STUDY;
+
+CREATE TABLE table3 (
+  _id INT AUTO_INCREMENT, 
+  name VARCHAR(32) NOT NULL, 
+  belong VARCHAR(12) DEFAULT 'FOO', 
+  phone VARCHAR(12), 
+  status INT,
+  PRIMARY KEY(_id)
+) ENGINE = INNODB default character set utf8 collate utf8_general_ci;
+
+INSERT INTO STUDY.table3
+    (name, belong, phone, status)
+SELECT
+    name,
+    belong,
+    phone,
+    status
+FROM
+    TRAINING1.table2

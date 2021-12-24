@@ -17,7 +17,6 @@ CREATE TABLE child (
 
 TRUNCATE TABLE child;
 
-
 -- count()함수의 사용
 SELECT 
     COUNT(*)
@@ -138,7 +137,7 @@ SELECT
     main._id,
     main.name
 FROM 
-    child
+    child as jasic
 WHERE 
     _id BETWEEN 100 AND 200;
 
@@ -151,7 +150,7 @@ WHERE
     _id BETWEEN 100 AND 200
 ORDER BY age DESC;
 
--- 오름차순 asc
+-- 내림차순 asc
 SELECT 
     *
 FROM 
@@ -206,7 +205,6 @@ WHERE
 ;
 
 -- 사람의 나이가 90세가 끝이라고 생각 했을 때 부모님이 살아계신 자식의 수는 몇개일까요
--- 90세 이하의 parent가 
 SELECT 
     COUNT(*)
 FROM 
@@ -257,3 +255,20 @@ WHERE
 --     parent
 -- WHERE 
 --     age <= 90;
+
+-- 부모가 있는 자식 중에 나이가 어린 순으로 100명을 구하시오
+SELECT 
+    *
+FROM 
+    STUDY.child
+WHERE 
+    parent_id IN (
+        SELECT 
+            _id 
+        FROM 
+            parent 
+    ) 
+ORDER BY 
+    child.age ASC 
+LIMIT 100
+;

@@ -272,3 +272,274 @@ ORDER BY
     child.age ASC 
 LIMIT 100
 ;
+
+
+-- 자식이 있는 부모 중에 나이가 많은 순으로 10명을 구하시오
+SELECT 
+    *
+FROM 
+    STUDY.parent
+WHERE 
+    _id IN (
+        SELECT 
+            parent_id 
+        FROM 
+            STUDY.child 
+    ) 
+ORDER BY  
+    parent.age DESC 
+LIMIT 10
+;
+
+
+--자식 이름이 a로 시작하는 부모 10명을 나이가 많은 순으로 구하시오
+SELECT 
+    *
+FROM 
+    STUDY.parent
+WHERE 
+    _id IN (
+        SELECT 
+            parent_id 
+        FROM 
+            STUDY.child
+        WHERE
+            child.name LIKE 'a%'
+    ) 
+ORDER BY  
+    parent.age DESC 
+LIMIT 10
+;
+
+-- 1대 N의 관계 : 부모1 -> 자식N 관계
+
+-- 1대 1의 관계 : 남편1 <-> 부인1 관계 
+-- 양쪽 모두 parent_id / child_id를 NOT NULL로 만듬??
+
+-- N대 N의 관계 : 학원N <-> 원생N 관계
+-- 
+
+-- AVG() 함수 평균 값을 구한다
+SELECT 
+    AVG(age)
+FROM
+    STUDY.child
+WHERE 
+    _id BETWEEN 100 AND 200
+;
+
+-- max(n) 최대 값을 가져옵니다. 
+SELECT 
+    MAX(age)
+FROM
+    STUDY.child
+WHERE 
+    _id BETWEEN 100 AND 200
+;
+
+-- min(n) 최대 값을 가져옵니다. 
+SELECT 
+    MIN(age)
+FROM
+    STUDY.child
+WHERE 
+    _id BETWEEN 100 AND 200
+;
+
+-- SUM() 모든 값의 합을 가져옵니다. 
+SELECT 
+    SUM(age)
+FROM
+    STUDY.child
+WHERE 
+    _id BETWEEN 100 AND 200
+;
+
+--ucase() 대문자로 변환합니다. 
+SELECT 
+    UCASE(name)
+FROM
+    STUDY.child
+WHERE 
+    _id BETWEEN 100 AND 200
+;
+
+--lcase() 소문자로 변환합니다. 
+SELECT 
+    LCASE(name)
+FROM
+    STUDY.child
+WHERE 
+    _id BETWEEN 100 AND 200
+;
+
+-- left(col,n) 왼쪽부터 몇쨰까지의 텍스트를 반환합니다. 
+SELECT 
+    LEFT(name,2)
+FROM
+    STUDY.child
+WHERE 
+    _id BETWEEN 100 AND 200
+;
+
+-- mid(col,3,2) 왼쪽부터 몇쨰까지의 텍스트를 반환합니다. 
+SELECT 
+    MID(name,3,2)
+FROM
+    STUDY.child
+WHERE 
+    _id BETWEEN 100 AND 200
+;
+
+-- LENGTH(col) 왼쪽부터 몇쨰까지의 텍스트를 반환합니다. 
+SELECT 
+    LENGTH(name)
+FROM
+    STUDY.child
+WHERE 
+    _id BETWEEN 100 AND 200
+;
+
+-- NOW() 현재의 시간을 반환합니다. 
+SELECT 
+    NOW()
+;
+
+UPDATE 
+    child
+SET 
+    nowdate = NOW()
+;
+
+
+--from 의 테이블 대신!
+-- from의 테이블로 쓰일 경우, alias는 필수입니다. 
+
+SELECT
+    base.*
+FROM    
+    (select
+        _id,
+        name,
+        age
+    FROM 
+        child
+    WHERE 
+        _id > 100 ) as base
+WHERE 
+    base.age > 50;
+
+-- 컬럼의 역할도
+-- 컬럼 대신으로 사용합니다. 내부 비교연산을 위해 alias는 필수
+
+SELECT 
+    child.age,
+    (SELECT 
+        child.age 
+    FROM 
+        parent 
+    WHERE 
+        _id = child._id = child.parent_id 
+    LIMIT 1
+    )
+FROM 
+    child as child
+LIMIT
+    100;
+
+-- 부모님이 없는 자식의 이름을 대문자로 찾으세요.
+SELECT 
+    UCASE(child.name)
+FROM 
+    STUDY.child
+WHERE 
+    child.name NOT IN (
+        SELECT 
+            parent.name
+        FROM 
+            STUDY.parent
+    )
+;
+
+-- 사람의 나이가 90세가 끝이라고 생각했을 때 
+-- 자식이 살아있고 본인도 살아있는 부모의 최대나이는 몇살인가요?
+    
+SELECT 
+    MAX(parent.age)
+FROM 
+    STUDY.parent
+WHERE 
+    parent._id IN (
+        SELECT 
+            child.parent_id
+        FROM 
+            STUDY.child
+        WHERE 
+            child.age <= 90
+    )
+    AND parent.age <= 90
+;
+
+
+-- 자식이 있는 부모 중에 이름이 2~3번째에 ab가 들어가는 
+-- 나이가 많은 순으로 10명을 구하시오
+SELECT 
+    parent.name
+FROM 
+    STUDY.parent
+WHERE 
+    parent._id IN (
+        SELECT 
+            child.parent_id
+        FROM 
+            STUDY.child
+    )
+    AND parent.name LIKE '_ab%'
+ORDER BY  
+    parent.age DESC 
+LIMIT 10
+;
+
+-- 자식보다 어린 부모의 개수를 구하시오.
+-- 그리고 증명하는 쿼리를 작성하세요.
+
+-- 1. 자식이 있는 부모 
+-- 2. 자식 나이를 SELECT (서브쿼리) 
+-- 3. 1~2를 테이블로(서브쿼리)
+-- 4. 나이 비교 
+SELECT 
+    age_table.*
+FROM
+(
+    SELECT 
+        parent._id,
+        parent.name,
+        parent.age,
+        (select MAX(age) from child where parent_id = parent._id ) as child_age 
+    FROM 
+        parent as parent
+    WHERE 
+        parent._id IN (
+            SELECT 
+                child.parent_id
+            FROM 
+                child
+        )
+    ) as age_table
+WHERE 
+    age_table.age < age_table.child_age;
+
+SELECT 
+    parent._id
+FROM 
+    parent
+WHERE 
+    parent._id IN (
+        SELECT 
+            child.parent_id
+        FROM 
+            child
+    )
+
+
+

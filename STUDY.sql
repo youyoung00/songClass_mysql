@@ -104,7 +104,16 @@ WHERE
     name LIKE "%a___";
 
 
--- a가 맨앞 맨뒤에 있는 값만 가져오기
+-- a가 맨앞, 맨뒤에 있는 값만 가져오기
+SELECT 
+    *
+FROM 
+    child
+WHERE 
+    name LIKE 'a%' AND name LIKE '%a';
+
+
+-- a가 첫자리에 있거나, 끝자리에 있는 값만 가져오기
 SELECT 
     *
 FROM 
@@ -113,13 +122,13 @@ WHERE
     name LIKE 'a%' OR name LIKE '%a';
 
 
--- _id 가 100에서 200사이인 값만 가져오기
+-- _id 가 100부터 200개(300까지)의 값만 가져오기
 SELECT 
     *
 FROM 
     child
 WHERE 
-    _id BETWEEN 100 AND 200;
+    _id BETWEEN 10 AND 50;
 
 
 -- 컬럼의 alias
@@ -137,7 +146,7 @@ SELECT
     main._id,
     main.name
 FROM 
-    child as jasic
+    child as main
 WHERE 
     _id BETWEEN 100 AND 200;
 
@@ -149,6 +158,7 @@ FROM
 WHERE 
     _id BETWEEN 100 AND 200
 ORDER BY age DESC;
+
 
 -- 내림차순 asc
 SELECT 
@@ -165,10 +175,8 @@ SELECT
     *
 FROM 
     child
--- WHERE 
---     _id BETWEEN 100 AND 200
-ORDER BY age ASC
-LIMIT 100; 
+ORDER BY _id ASC
+LIMIT 10; 
 
 
 -- 끝을 자릅니다. LIMIT문 시작과 끝을 쓸 경우
@@ -176,10 +184,8 @@ SELECT
     *
 FROM 
     child
--- WHERE 
---     _id BETWEEN 100 AND 200
-ORDER BY age ASC
-LIMIT 100,200; 
+ORDER BY _id ASC
+LIMIT 10, 20; 
 
 
 -- 부모님이 없는 자식의 개수를 찾으세요
@@ -540,6 +546,177 @@ WHERE
         FROM 
             child
     )
+;
+
+TRUNCATE TABLE parent;
+TRUNCATE TABLE child;
 
 
+-- DATABASE 3~4일차 퀴즈 복습 --
 
+SELECT 
+    COUNT(*)
+FROM 
+    child
+WHERE 
+    child.parent_id NOT IN (
+        SELECT  
+            parent._id
+        FROM 
+            parent 
+    )
+;
+
+SELECT 
+    COUNT(*)
+FROM 
+    parent
+WHERE 
+    parent._id NOT IN (
+        SELECT  
+            child.parent_id
+        FROM 
+            child 
+    )
+;
+
+SELECT 
+    count(*)
+FROM 
+    child
+WHERE 
+    child.parent_id IN (
+        SELECT 
+            parent._id
+        FROM 
+            parent
+        WHERE 
+            parent.age <= 90
+    )
+    AND child.age <= 90
+;
+
+SELECT 
+    COUNT(*)
+FROM 
+    parent
+WHERE 
+    parent._id IN (
+        SELECT 
+            child._id
+        FROM 
+            child
+        WHERE 
+            child.age <= 90
+    )
+    AND parent.age <= 90
+;
+
+SELECT 
+    *
+FROM 
+    child
+WHERE 
+    child.parent_id IN (
+        SELECT 
+            parent._id
+        FROM 
+            parent            
+    )
+ORDER BY age ASC 
+LIMIT 100
+;
+
+SELECT 
+    *
+FROM 
+    parent
+WHERE 
+    parent._id IN (
+        SELECT 
+            child.parent_id
+        FROM 
+            child
+    )
+ORDER BY parent.age DESC 
+LIMIT 10
+;
+
+SELECT
+    *
+FROM 
+    child
+WHERE 
+    child.parent_id IN (
+        SELECT 
+            parent._id
+        FROM 
+            parent
+        WHERE 
+            parent.name LIKE '%a%'
+    )
+ORDER BY child.age DESC 
+LIMIT 10
+;
+
+SELECT 
+    *
+FROM 
+    parent
+WHERE 
+    parent._id IN (
+        SELECT 
+            child.parent_id
+        FROM 
+            child
+        WHERE 
+            child.name LIKE '%a%'
+    )
+ORDER BY parent.age DESC
+LIMIT 10
+;
+
+SELECT 
+    AVG(age)
+FROM 
+    child
+WHERE 
+    _id BETWEEN 100 AND 200;
+
+SELECT 
+    MAX(age)
+FROM 
+    child
+WHERE 
+    _id BETWEEN 100 AND 200;
+
+SELECT 
+    MIN(age)
+FROM 
+    child
+WHERE 
+    _id BETWEEN 100 AND 200;
+
+SELECT 
+    SUM(age)
+FROM 
+    child
+WHERE 
+    _id BETWEEN 100 AND 200
+;
+
+SELECT 
+    UCASE(name)
+FROM 
+    child
+WHERE 
+    _id BETWEEN 100 AND 200
+;
+
+SELECT 
+    LCASE(name)
+FROM 
+    child
+WHERE 
+    _id BETWEEN 100 AND 200
+;
